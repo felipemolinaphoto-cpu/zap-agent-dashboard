@@ -1,0 +1,5 @@
+{
+  "name": "Zap Agent",
+  "description": "Uma plataforma para configurar, treinar e testar seu agente de IA para WhatsApp. Defina a personalidade, faça upload de documentos de conhecimento e simule conversas reais antes de implantar.",
+  "requestFramePermissions": []
+}
