@@ -15,10 +15,10 @@ const getAI = (): GoogleGenAI => {
 
 export const createChatSession = (config: AgentConfig) => {
   const ai = getAI();
-  
+
   // 1. Process Text Documents
   const textDocs = config.documents.filter(d => d.type === 'text' || (d.type === 'file' && d.mimeType?.startsWith('text/')));
-  const textKnowledgeBase = textDocs.map(doc => 
+  const textKnowledgeBase = textDocs.map(doc =>
     `--- DOCUMENTO DE REFERÊNCIA: ${doc.name} ---\n${doc.content}\n--- FIM DO DOCUMENTO ---`
   ).join('\n\n');
 
@@ -31,14 +31,14 @@ export const createChatSession = (config: AgentConfig) => {
     : '';
 
   // 3. Process Examples (Few-Shot Learning)
-  const examplesText = config.examples.length > 0 
+  const examplesText = config.examples.length > 0
     ? `
     EXEMPLOS DE COMPORTAMENTO (Siga este padrão de resposta):
     ${config.examples.map(ex => `
     Usuário: "${ex.userQuery}"
     ${config.name}: "${ex.agentResponse}"
     `).join('\n')}
-    ` 
+    `
     : '';
 
   // 4. Construct System Instruction
@@ -68,7 +68,7 @@ export const createChatSession = (config: AgentConfig) => {
 
   // 5. Handle Media Files (PDFs, Images)
   const mediaDocs = config.documents.filter(d => d.type === 'file' && !d.mimeType?.startsWith('text/'));
-  
+
   let history: Content[] = [];
 
   if (mediaDocs.length > 0) {
@@ -93,7 +93,7 @@ export const createChatSession = (config: AgentConfig) => {
   const tools = config.websites.length > 0 ? [{ googleSearch: {} }] : undefined;
 
   const chat: Chat = ai.chats.create({
-    model: 'gemini-2.5-flash', // Supports Search tool
+    model: "gemini-1.5-flash", // Supports Search tool
     history: history,
     config: {
       systemInstruction: fullSystemInstruction,
@@ -110,7 +110,7 @@ export const sendMessageToAgent = async (chat: Chat, message: string): Promise<s
     const result = await chat.sendMessage({
       message: message
     });
-    
+
     // Check for grounding metadata (sources) if needed, but for WhatsApp we return plain text.
     // The model usually incorporates the info into the text.
     return result.text || "Desculpe, não consegui processar a resposta.";
